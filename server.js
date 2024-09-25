@@ -14,11 +14,10 @@ app.get('/greetings/:name', (req, res) => {
   app.get('/roll/:number', (req, res) => {
       const number = req.params.number;
       
-    // Check if the parameter is a valid number
     if (isNaN(number)) {
         res.send('You must specify a number.');
     } else {
-        const dice = parseInt(number, 10); // Convert the parameter to an integer
+        const dice = parseInt(number, 10);
         const randomRoll = Math.floor(Math.random() * (dice + 1));
         res.send(`You rolled a ${randomRoll}.`);
     }
@@ -64,16 +63,33 @@ app.get('/collectibles/:index', (req, res) => {
 ];
 
 
-  app.get('/shoes/', (req, res) => {
-       
-    productList ='';
-    shoes.forEach((product) => {
-      productList += `<br> Brand: ${product.name}: Value: ${product.price} £, Type: ${product.type}<br>`;
-    })
-    res.send(productList);
-     
-});
+  app.get('/shoes', (req, res) => {
+    const minPrice = parseInt(req.query.minPrice);
+    const maxPrice = parseInt(req.query.maxPrice);
+    const type = req.query.type;
 
+    let results = shoes;
+
+    if(minPrice) {
+      results = results.filter((shoe) => {
+     return  shoe.price >= minPrice;
+    })
+  }
+
+  if(maxPrice) {
+    results = results.filter((shoe) => {
+      return shoe.price <= maxPrice;
+    })
+  }
+
+  if (type) {
+    results = results.filter((shoe) => {
+      return shoe.type === type;
+    })
+  }
+  res.send(results);
+    
+});
 
 
 // ____________________listeners____________________________//
